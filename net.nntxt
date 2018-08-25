@@ -1,0 +1,1016 @@
+global_config {
+  default_context {
+    array_class: "CpuCachedArray"
+    backends: "cpu:float"
+  }
+}
+training_config {
+  max_epoch: 300
+  iter_per_epoch: 34
+  save_best: true
+  monitor_interval: 10
+}
+network {
+  name: "Main"
+  batch_size: 100
+  variable {
+    name: "Input"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 dim: 256 }
+  }
+  variable {
+    name: "Affine/affine/W"
+    type: "Parameter"
+    shape: { dim: 256 dim: 128 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine/affine/b"
+    type: "Parameter"
+    shape: { dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_2/affine/W"
+    type: "Parameter"
+    shape: { dim: 128 dim: 32 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_2/affine/b"
+    type: "Parameter"
+    shape: { dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_3/affine/W"
+    type: "Parameter"
+    shape: { dim: 32 dim: 1 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_3/affine/b"
+    type: "Parameter"
+    shape: { dim: 1 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BinaryCrossEntropy_T"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "Affine"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "BatchNormalization"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Tanh"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Affine_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "BatchNormalization_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Tanh_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Affine_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "Sigmoid_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "BinaryCrossEntropy"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  function {
+    name: "Affine"
+    type: "Affine"
+    input: "Input"
+    input: "Affine/affine/W"
+    input: "Affine/affine/b"
+    output: "Affine"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization"
+    type: "BatchNormalization"
+    input: "Affine"
+    input: "BatchNormalization/bn/beta"
+    input: "BatchNormalization/bn/gamma"
+    input: "BatchNormalization/bn/mean"
+    input: "BatchNormalization/bn/var"
+    output: "BatchNormalization"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: True
+    }
+  }
+  function {
+    name: "Tanh"
+    type: "Tanh"
+    input: "BatchNormalization"
+    output: "Tanh"
+  }
+  function {
+    name: "Affine_2"
+    type: "Affine"
+    input: "Tanh"
+    input: "Affine_2/affine/W"
+    input: "Affine_2/affine/b"
+    output: "Affine_2"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization_2"
+    type: "BatchNormalization"
+    input: "Affine_2"
+    input: "BatchNormalization_2/bn/beta"
+    input: "BatchNormalization_2/bn/gamma"
+    input: "BatchNormalization_2/bn/mean"
+    input: "BatchNormalization_2/bn/var"
+    output: "BatchNormalization_2"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: True
+    }
+  }
+  function {
+    name: "Tanh_2"
+    type: "Tanh"
+    input: "BatchNormalization_2"
+    output: "Tanh_2"
+  }
+  function {
+    name: "Affine_3"
+    type: "Affine"
+    input: "Tanh_2"
+    input: "Affine_3/affine/W"
+    input: "Affine_3/affine/b"
+    output: "Affine_3"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "Sigmoid_3"
+    type: "Sigmoid"
+    input: "Affine_3"
+    output: "Sigmoid_3"
+  }
+  function {
+    name: "BinaryCrossEntropy"
+    type: "BinaryCrossEntropy"
+    input: "Sigmoid_3"
+    input: "BinaryCrossEntropy_T"
+    output: "BinaryCrossEntropy"
+  }
+}
+network {
+  name: "MainValidation"
+  batch_size: 100
+  variable {
+    name: "Input"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 dim: 256 }
+  }
+  variable {
+    name: "Affine/affine/W"
+    type: "Parameter"
+    shape: { dim: 256 dim: 128 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine/affine/b"
+    type: "Parameter"
+    shape: { dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_2/affine/W"
+    type: "Parameter"
+    shape: { dim: 128 dim: 32 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_2/affine/b"
+    type: "Parameter"
+    shape: { dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_3/affine/W"
+    type: "Parameter"
+    shape: { dim: 32 dim: 1 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_3/affine/b"
+    type: "Parameter"
+    shape: { dim: 1 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BinaryCrossEntropy_T"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "Affine"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "BatchNormalization"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Tanh"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Affine_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "BatchNormalization_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Tanh_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Affine_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "Sigmoid_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "BinaryCrossEntropy"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  function {
+    name: "Affine"
+    type: "Affine"
+    input: "Input"
+    input: "Affine/affine/W"
+    input: "Affine/affine/b"
+    output: "Affine"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization"
+    type: "BatchNormalization"
+    input: "Affine"
+    input: "BatchNormalization/bn/beta"
+    input: "BatchNormalization/bn/gamma"
+    input: "BatchNormalization/bn/mean"
+    input: "BatchNormalization/bn/var"
+    output: "BatchNormalization"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: False
+    }
+  }
+  function {
+    name: "Tanh"
+    type: "Tanh"
+    input: "BatchNormalization"
+    output: "Tanh"
+  }
+  function {
+    name: "Affine_2"
+    type: "Affine"
+    input: "Tanh"
+    input: "Affine_2/affine/W"
+    input: "Affine_2/affine/b"
+    output: "Affine_2"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization_2"
+    type: "BatchNormalization"
+    input: "Affine_2"
+    input: "BatchNormalization_2/bn/beta"
+    input: "BatchNormalization_2/bn/gamma"
+    input: "BatchNormalization_2/bn/mean"
+    input: "BatchNormalization_2/bn/var"
+    output: "BatchNormalization_2"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: False
+    }
+  }
+  function {
+    name: "Tanh_2"
+    type: "Tanh"
+    input: "BatchNormalization_2"
+    output: "Tanh_2"
+  }
+  function {
+    name: "Affine_3"
+    type: "Affine"
+    input: "Tanh_2"
+    input: "Affine_3/affine/W"
+    input: "Affine_3/affine/b"
+    output: "Affine_3"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "Sigmoid_3"
+    type: "Sigmoid"
+    input: "Affine_3"
+    output: "Sigmoid_3"
+  }
+  function {
+    name: "BinaryCrossEntropy"
+    type: "BinaryCrossEntropy"
+    input: "Sigmoid_3"
+    input: "BinaryCrossEntropy_T"
+    output: "BinaryCrossEntropy"
+  }
+}
+network {
+  name: "MainRuntime"
+  batch_size: 100
+  variable {
+    name: "Input"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 dim: 256 }
+  }
+  variable {
+    name: "Affine/affine/W"
+    type: "Parameter"
+    shape: { dim: 256 dim: 128 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine/affine/b"
+    type: "Parameter"
+    shape: { dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 128 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_2/affine/W"
+    type: "Parameter"
+    shape: { dim: 128 dim: 32 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_2/affine/b"
+    type: "Parameter"
+    shape: { dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/beta"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/gamma"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/mean"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "BatchNormalization_2/bn/var"
+    type: "Parameter"
+    shape: { dim: 1 dim: 32 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine_3/affine/W"
+    type: "Parameter"
+    shape: { dim: 32 dim: 1 }
+    initializer {
+      type: "NormalAffineGlorot"
+      multiplier: 1
+    }
+  }
+  variable {
+    name: "Affine_3/affine/b"
+    type: "Parameter"
+    shape: { dim: 1 }
+    initializer {
+      type: "Constant"
+      multiplier: 0
+    }
+  }
+  variable {
+    name: "Affine"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "BatchNormalization"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Tanh"
+    type: "Buffer"
+    shape: { dim:-1 dim: 128 }
+  }
+  variable {
+    name: "Affine_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "BatchNormalization_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Tanh_2"
+    type: "Buffer"
+    shape: { dim:-1 dim: 32 }
+  }
+  variable {
+    name: "Affine_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  variable {
+    name: "Sigmoid_3"
+    type: "Buffer"
+    shape: { dim:-1 dim: 1 }
+  }
+  function {
+    name: "Affine"
+    type: "Affine"
+    input: "Input"
+    input: "Affine/affine/W"
+    input: "Affine/affine/b"
+    output: "Affine"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization"
+    type: "BatchNormalization"
+    input: "Affine"
+    input: "BatchNormalization/bn/beta"
+    input: "BatchNormalization/bn/gamma"
+    input: "BatchNormalization/bn/mean"
+    input: "BatchNormalization/bn/var"
+    output: "BatchNormalization"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: False
+    }
+  }
+  function {
+    name: "Tanh"
+    type: "Tanh"
+    input: "BatchNormalization"
+    output: "Tanh"
+  }
+  function {
+    name: "Affine_2"
+    type: "Affine"
+    input: "Tanh"
+    input: "Affine_2/affine/W"
+    input: "Affine_2/affine/b"
+    output: "Affine_2"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "BatchNormalization_2"
+    type: "BatchNormalization"
+    input: "Affine_2"
+    input: "BatchNormalization_2/bn/beta"
+    input: "BatchNormalization_2/bn/gamma"
+    input: "BatchNormalization_2/bn/mean"
+    input: "BatchNormalization_2/bn/var"
+    output: "BatchNormalization_2"
+    batch_normalization_param {
+      axes: 1
+      decay_rate: 0.9
+      eps: 0.0001
+      batch_stat: False
+    }
+  }
+  function {
+    name: "Tanh_2"
+    type: "Tanh"
+    input: "BatchNormalization_2"
+    output: "Tanh_2"
+  }
+  function {
+    name: "Affine_3"
+    type: "Affine"
+    input: "Tanh_2"
+    input: "Affine_3/affine/W"
+    input: "Affine_3/affine/b"
+    output: "Affine_3"
+    affine_param {
+      base_axis: 1
+    }
+  }
+  function {
+    name: "Sigmoid_3"
+    type: "Sigmoid"
+    input: "Affine_3"
+    output: "Sigmoid_3"
+  }
+}
+dataset {
+  name: "Training"
+  uri: "C:\\tmp2\\for_demo_train.csv"
+  cache_dir: "C:\\tmp2\\for_demo_train.cache"
+  overwrite_cache: True
+  create_cache_explicitly: True
+  shuffle: true
+  no_image_normalization: True
+  batch_size: 100
+}
+dataset {
+  name: "Validation"
+  uri: "C:\\tmp2\\for_demo_valid.csv"
+  cache_dir: "C:\\tmp2\\for_demo_valid.cache"
+  overwrite_cache: True
+  create_cache_explicitly: True
+  shuffle: false
+  no_image_normalization: True
+  batch_size: 100
+}
+optimizer {
+  name: "Optimizer"
+  update_interval: 1
+  network_name: "Main"
+  dataset_name: "Training"
+  solver {
+    type: "Adam"
+    weight_decay: 0
+    lr_decay: 1
+    lr_decay_interval: 34
+    adam_param {
+      alpha: 0.001
+      beta1: 0.9
+      beta2: 0.999
+      eps: 1e-08
+    }
+  }
+  data_variable {
+    variable_name: "Input"
+    data_name: "x"
+  }
+  data_variable {
+    variable_name: "BinaryCrossEntropy_T"
+    data_name: "y"
+  }
+  loss_variable {
+    variable_name: "BinaryCrossEntropy"
+  }
+  parameter_variable {
+    variable_name: "Affine/affine/W"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "Affine/affine/b"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/beta"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/gamma"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/mean"
+    learning_rate_multiplier: 0
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/var"
+    learning_rate_multiplier: 0
+  }
+  parameter_variable {
+    variable_name: "Affine_2/affine/W"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "Affine_2/affine/b"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/beta"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/gamma"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/mean"
+    learning_rate_multiplier: 0
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/var"
+    learning_rate_multiplier: 0
+  }
+  parameter_variable {
+    variable_name: "Affine_3/affine/W"
+    learning_rate_multiplier: 1
+  }
+  parameter_variable {
+    variable_name: "Affine_3/affine/b"
+    learning_rate_multiplier: 1
+  }
+}
+monitor {
+  name: "train_error"
+  network_name: "MainValidation"
+  dataset_name: "Training"
+  data_variable {
+    variable_name: "Input"
+    data_name: "x"
+  }
+  data_variable {
+    variable_name: "BinaryCrossEntropy_T"
+    data_name: "y"
+  }
+  monitor_variable {
+    type: "Error"
+    variable_name: "BinaryCrossEntropy"
+  }
+}
+monitor {
+  name: "valid_error"
+  network_name: "MainValidation"
+  dataset_name: "Validation"
+  data_variable {
+    variable_name: "Input"
+    data_name: "x"
+  }
+  data_variable {
+    variable_name: "BinaryCrossEntropy_T"
+    data_name: "y"
+  }
+  monitor_variable {
+    type: "Error"
+    variable_name: "BinaryCrossEntropy"
+  }
+}
+executor {
+  name: "Executor"
+  network_name: "MainRuntime"
+  num_evaluations: 1
+  repeat_evaluation_type: "mean"
+  need_back_propagation: false
+  data_variable {
+    variable_name: "Input"
+    data_name: "x"
+  }
+  output_variable {
+    variable_name: "Sigmoid_3"
+    data_name: "y'"
+  }
+  parameter_variable {
+    variable_name: "Affine/affine/W"
+  }
+  parameter_variable {
+    variable_name: "Affine/affine/b"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/beta"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/gamma"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/mean"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization/bn/var"
+  }
+  parameter_variable {
+    variable_name: "Affine_2/affine/W"
+  }
+  parameter_variable {
+    variable_name: "Affine_2/affine/b"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/beta"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/gamma"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/mean"
+  }
+  parameter_variable {
+    variable_name: "BatchNormalization_2/bn/var"
+  }
+  parameter_variable {
+    variable_name: "Affine_3/affine/W"
+  }
+  parameter_variable {
+    variable_name: "Affine_3/affine/b"
+  }
+}
